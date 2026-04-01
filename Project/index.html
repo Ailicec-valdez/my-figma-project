@@ -3,15 +3,251 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Your Website Title</title>
-  <!-- Link to your CSS file -->
+  <title>Figma Style Landing</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="Style.css" />
 </head>
 <body>
+  <div class="noise"></div>
+  <main class="page">
+    <header class="top-bar">
+      <span class="brand">The Unknown</span>
+    </header>
 
-  <!-- Your text content goes here -->
-  <h1>Welcome to My Website</h1>
-  <p>This is the text content from your TXT file.</p>
+    <section class="hero">
+      <p class="eyebrow">Ecological Video Game</p>
+      <h1>Learn about the unknown world of unloved species</h1>
+      <p class="lead">
+      Explore the fascinating lives of misunderstood animals through our interactive game. Discover how these creature contribute to our ecosytem and play a series of levels to understand their survival challenges and unique adaptations.
+      </p>
+
+      <div class="cta-row">
+        <button class="btn btn-primary" type="button">Learn more about the game</button>
+        <button class="btn btn-secondary" type="button">Education Center</button>
+      </div>
+    </section>
+
+    <section class="carousel" aria-label="Species image carousel">
+      <div class="carousel-head">
+        <p class="eyebrow">Creature Gallery</p>
+        <h2>Swipe selection of common misunderstood species</h2>
+      </div>
+
+      <div class="carousel-track-wrap" id="animal-carousel" tabindex="0" aria-roledescription="carousel">
+        <div class="carousel-track">
+          <figure class="slide is-active">
+            <img src="Images/Mexican free tail bat.jpeg" alt="Mexican free-tailed bat in flight" />
+            <figcaption>Mexican free-tailed bat: Known for their incredible speed and agility in flight.</figcaption>
+          </figure>
+          <figure class="slide">
+            <img src="Images/Jumping spider.jpeg" alt="Jumping spider" />
+            <figcaption>Jumping spiders are known for their exceptional vision and agility.</figcaption>
+          </figure>
+          <figure class="slide">
+            <img src="Images/Opposum.jpeg" alt="Opossum" />
+            <figcaption>Opossums are marsupials known for their ability to play dead when threatened.</figcaption>
+          </figure>
+          <figure class="slide">
+            <img src="Images/Rat snake.jpeg" alt="Rat snake" />
+            <figcaption>Rat snakes are non-venomous and known for their agility.</figcaption>
+          </figure>
+        </div>
+
+        <div class="carousel-controls">
+          <button class="btn btn-secondary carousel-btn" id="prev-slide" type="button" aria-label="Previous image">Prev</button>
+          <div class="carousel-dots" id="carousel-dots" aria-label="Slide selectors"></div>
+          <button class="btn btn-primary carousel-btn" id="next-slide" type="button" aria-label="Next image">Next</button>
+        </div>
+      </div>
+    </section>
+
+   
+     
+
+    <section class="survey" aria-labelledby="survey-heading">
+      <div class="survey-head">
+        <p class="eyebrow">Educational Survey</p>
+        <h2 id="survey-heading">Animal awareness quick survey</h2>
+        <p class="lead survey-lead">
+          Share your answers to help us understand animal preferences and common fears.
+        </p>
+      </div>
+
+      <form id="animal-survey" class="survey-form" novalidate>
+        <label class="field">
+          <span>What's your favorite animal?</span>
+          <input type="text" name="favoriteAnimal" placeholder="Dolphin" required />
+        </label>
+
+        <label class="field">
+          <span>What animal do you fear?</span>
+          <input type="text" name="fearedAnimal" placeholder="Snake" required />
+        </label>
+
+        <div class="survey-actions field-full">
+          <button class="btn btn-primary" type="submit">Submit Survey</button>
+          <button class="btn btn-secondary" id="download-data" type="button">Download CSV</button>
+        </div>
+
+        <p id="survey-status" class="survey-status" aria-live="polite"></p>
+      </form>
+
+      <p class="survey-count">Saved responses: <strong id="response-count">0</strong></p>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      const form = document.getElementById("animal-survey");
+      const status = document.getElementById("survey-status");
+      const responseCount = document.getElementById("response-count");
+      const downloadButton = document.getElementById("download-data");
+      const storageKey = "animalEducationSurveyResponses";
+      const carousel = document.getElementById("animal-carousel");
+      const slides = Array.from(document.querySelectorAll(".slide"));
+      const dotsContainer = document.getElementById("carousel-dots");
+      const prevButton = document.getElementById("prev-slide");
+      const nextButton = document.getElementById("next-slide");
+      let currentSlide = 0;
+      let autoPlay;
+
+      function loadResponses() {
+        try {
+          return JSON.parse(localStorage.getItem(storageKey)) || [];
+        } catch (error) {
+          return [];
+        }
+      }
+
+      function saveResponses(data) {
+        localStorage.setItem(storageKey, JSON.stringify(data));
+      }
+
+      function updateCount() {
+        responseCount.textContent = String(loadResponses().length);
+      }
+
+      function renderDots() {
+        dotsContainer.innerHTML = "";
+        slides.forEach((_, index) => {
+          const dot = document.createElement("button");
+          dot.type = "button";
+          dot.className = "carousel-dot";
+          dot.setAttribute("aria-label", `Go to slide ${index + 1}`);
+          dot.addEventListener("click", () => showSlide(index));
+          dotsContainer.appendChild(dot);
+        });
+      }
+
+      function showSlide(index) {
+        currentSlide = (index + slides.length) % slides.length;
+        slides.forEach((slide, slideIndex) => {
+          slide.classList.toggle("is-active", slideIndex === currentSlide);
+        });
+
+        const dots = dotsContainer.querySelectorAll(".carousel-dot");
+        dots.forEach((dot, dotIndex) => {
+          dot.classList.toggle("is-active", dotIndex === currentSlide);
+        });
+      }
+
+      function startAutoPlay() {
+        autoPlay = setInterval(() => {
+          showSlide(currentSlide + 1);
+        }, 4000);
+      }
+
+      function stopAutoPlay() {
+        clearInterval(autoPlay);
+      }
+
+      function toCsv(rows) {
+        const headers = ["timestamp", "favoriteAnimal", "fearedAnimal"];
+        const csvRows = [headers.join(",")];
+
+        rows.forEach((row) => {
+          const values = headers.map((header) => {
+            const value = row[header] || "";
+            return `"${String(value).replaceAll('"', '""')}"`;
+          });
+          csvRows.push(values.join(","));
+        });
+
+        return csvRows.join("\n");
+      }
+
+      form.addEventListener("submit", (event) => {
+        event.preventDefault();
+
+        if (!form.checkValidity()) {
+          status.textContent = "Please complete all required fields before submitting.";
+          return;
+        }
+
+        const formData = new FormData(form);
+        const entry = {
+          timestamp: new Date().toISOString(),
+          favoriteAnimal: formData.get("favoriteAnimal"),
+          fearedAnimal: formData.get("fearedAnimal")
+        };
+
+        const responses = loadResponses();
+        responses.push(entry);
+        saveResponses(responses);
+        form.reset();
+        updateCount();
+        status.textContent = "Survey submitted successfully. Thanks for sharing.";
+      });
+
+      downloadButton.addEventListener("click", () => {
+        const responses = loadResponses();
+
+        if (!responses.length) {
+          status.textContent = "No responses yet to download.";
+          return;
+        }
+
+        const blob = new Blob([toCsv(responses)], { type: "text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "animal-survey-responses.csv";
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(url);
+      });
+
+      prevButton.addEventListener("click", () => {
+        showSlide(currentSlide - 1);
+      });
+
+      nextButton.addEventListener("click", () => {
+        showSlide(currentSlide + 1);
+      });
+
+      carousel.addEventListener("mouseenter", stopAutoPlay);
+      carousel.addEventListener("mouseleave", startAutoPlay);
+      carousel.addEventListener("focusin", stopAutoPlay);
+      carousel.addEventListener("focusout", startAutoPlay);
+      carousel.addEventListener("keydown", (event) => {
+        if (event.key === "ArrowLeft") {
+          showSlide(currentSlide - 1);
+        }
+        if (event.key === "ArrowRight") {
+          showSlide(currentSlide + 1);
+        }
+      });
+
+      renderDots();
+      showSlide(0);
+      startAutoPlay();
+
+      updateCount();
+    })();
+  </script>
 
 </body>
 </html>
