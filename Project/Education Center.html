@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Education Center</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com" />
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+	<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+	<link rel="stylesheet" href="Style.css" />
+</head>
+<body>
+	<div class="noise"></div>
+
+	<main class="page education-page">
+		<header class="top-bar education-top-bar">
+			<span class="brand education-brand">Education Center</span>
+			<a class="ghost-link" href="index.html">Back to Home</a>
+		</header>
+
+		<section class="education-hero">
+			<p class="eyebrow">Explore And Learn</p>
+			<h1>Fun facts about misunderstood animals</h1>
+			<p class="lead">
+				Learn what makes each species important to ecosystems, then test your knowledge with
+				quick activities. Same color vibe, just a cleaner and calmer look.
+			</p>
+		</section>
+
+		<section class="education-grid" aria-label="Learning modules">
+			<article class="education-card">
+				<h2>Bats</h2>
+				<p>
+					Bats are major pollinators and natural pest control helpers. One bat can eat thousands of
+					insects in a night.
+				</p>
+			</article>
+
+			<article class="education-card">
+				<h2>Opossums</h2>
+				<p>
+					Opossums eat ticks, insects, and garden pests. They are gentle scavengers that help keep
+					neighborhoods cleaner.
+				</p>
+			</article>
+
+			<article class="education-card">
+				<h2>Vultures</h2>
+				<p>
+					Vultures reduce disease spread by cleaning up carrion quickly. They play a key role in
+					healthy ecosystems.
+				</p>
+			</article>
+		</section>
+
+		<section class="education-quiz" aria-labelledby="quiz-heading">
+			<h2 id="quiz-heading">Quick Check-In</h2>
+			<p>Pick the answer you think is true:</p>
+			<div class="quiz-options" role="group" aria-label="Quiz options">
+				<button type="button" class="btn btn-secondary quiz-option" data-correct="false">Sharks are mammals</button>
+				<button type="button" class="btn btn-secondary quiz-option" data-correct="true">Earthworms improve soil health</button>
+				<button type="button" class="btn btn-secondary quiz-option" data-correct="false">All snakes are venomous</button>
+			</div>
+			<p class="quiz-status" id="quiz-status" aria-live="polite"></p>
+		</section>
+	</main>
+
+	<script>
+		(function () {
+			const options = Array.from(document.querySelectorAll(".quiz-option"));
+			const status = document.getElementById("quiz-status");
+
+			options.forEach((option) => {
+				option.addEventListener("click", () => {
+					const isCorrect = option.dataset.correct === "true";
+
+					options.forEach((item) => {
+						item.classList.remove("is-right", "is-wrong");
+					});
+
+					option.classList.add(isCorrect ? "is-right" : "is-wrong");
+					status.textContent = isCorrect
+						? "Correct. Earthworms are ecosystem helpers."
+						: "Nice try. Pick another option to learn more.";
+				});
+			});
+		})();
+	</script>
+</body>
+</html>
