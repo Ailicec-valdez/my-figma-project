@@ -276,6 +276,10 @@ h1 {
   box-shadow: 0 0 10px rgba(247, 201, 72, 0.45);
 }
 
+section[aria-labelledby="resources-heading"] {
+  margin-top: 28px;
+}
+
 .btn {
   display: inline-flex;
   align-items: center;
